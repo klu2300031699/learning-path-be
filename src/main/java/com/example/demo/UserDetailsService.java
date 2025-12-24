@@ -54,12 +54,8 @@ public class UserDetailsService {
             user = repository.findByMobileNumber(emailOrMobile);
         }
         
-        if (user == null) {
-            throw new RuntimeException("User not found");
-        }
-        
-        if (!user.getPassword().equals(password)) {
-            throw new RuntimeException("Invalid password");
+        if (user == null || !user.getPassword().equals(password)) {
+            throw new RuntimeException("Incorrect email/mobile or password");
         }
         
         return user;

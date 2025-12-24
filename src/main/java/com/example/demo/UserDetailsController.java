@@ -57,8 +57,15 @@ public class UserDetailsController {
 
     // LOGIN
     @PostMapping("/login")
-    public UserDetails loginUser(@RequestBody LoginRequest request) {
-        return service.loginUser(request.getEmailOrMobile(), request.getPassword());
+    public org.springframework.http.ResponseEntity<?> loginUser(@RequestBody LoginRequest request) {
+        try {
+            UserDetails user = service.loginUser(request.getEmailOrMobile(), request.getPassword());
+            return org.springframework.http.ResponseEntity.ok(user);
+        } catch (RuntimeException e) {
+            return org.springframework.http.ResponseEntity
+                .status(org.springframework.http.HttpStatus.UNAUTHORIZED)
+                .body(new ErrorResponse(e.getMessage()));
+        }
     }
 }
 
@@ -100,4 +107,16 @@ class LoginRequest {
 
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
+}
+
+// Error Response DTO class
+class ErrorResponse {
+    private String message;
+
+    public ErrorResponse(String message) {
+        this.message = message;
+    }
+
+    public String getMessage() { return message; }
+    public void setMessage(String message) { this.message = message; }
 }
