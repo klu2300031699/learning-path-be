@@ -15,17 +15,22 @@ public class UserDetailsController {
 
     // CREATE
     @PostMapping("/create")
-    public UserDetails createUser(
+    public org.springframework.http.ResponseEntity<?> createUser(
             @RequestBody UserRequest request) {
-
-        UserDetails user = new UserDetails();
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-        user.setMobileNumber(request.getMobileNumber());
-        user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
-
-        return service.createUser(user, request.getConfirmPassword());
+        try {
+            UserDetails user = new UserDetails();
+            user.setFirstName(request.getFirstName());
+            user.setLastName(request.getLastName());
+            user.setMobileNumber(request.getMobileNumber());
+            user.setEmail(request.getEmail());
+            user.setPassword(request.getPassword());
+            UserDetails created = service.createUser(user, request.getConfirmPassword());
+            return org.springframework.http.ResponseEntity.ok(created);
+        } catch (RuntimeException e) {
+            return org.springframework.http.ResponseEntity
+                .status(org.springframework.http.HttpStatus.CONFLICT)
+                .body(new ErrorResponse(e.getMessage()));
+        }
     }
 
     // READ ALL

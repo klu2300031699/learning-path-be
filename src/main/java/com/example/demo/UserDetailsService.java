@@ -15,6 +15,14 @@ public class UserDetailsService {
         if (!user.getPassword().equals(confirmPassword)) {
             throw new RuntimeException("Password and Confirm Password do not match");
         }
+        // Check for duplicate email
+        if (repository.findByEmail(user.getEmail()) != null) {
+            throw new RuntimeException("Email already exists");
+        }
+        // Check for duplicate mobile number
+        if (repository.findByMobileNumber(user.getMobileNumber()) != null) {
+            throw new RuntimeException("Mobile number already exists");
+        }
         return repository.save(user);
     }
 
