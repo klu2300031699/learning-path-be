@@ -14,6 +14,7 @@ public class UserDetails {
     private String mobileNumber;
     private String email;
     private String password;
+    private String role = "user"; // Default role is "user"
 
     public UserDetails() {}
 
@@ -35,4 +36,7 @@ public class UserDetails {
 
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
+
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
 }

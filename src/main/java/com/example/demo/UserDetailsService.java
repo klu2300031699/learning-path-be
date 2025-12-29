@@ -23,6 +23,8 @@ public class UserDetailsService {
         if (repository.findByMobileNumber(user.getMobileNumber()) != null) {
             throw new RuntimeException("Mobile number already exists");
         }
+        // Set default role as "user"
+        user.setRole("user");
         return repository.save(user);
     }
 
@@ -45,7 +47,12 @@ public class UserDetailsService {
         existingUser.setLastName(updatedUser.getLastName());
         existingUser.setMobileNumber(updatedUser.getMobileNumber());
         existingUser.setEmail(updatedUser.getEmail());
-        existingUser.setPassword(updatedUser.getPassword());
+        if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
+            existingUser.setPassword(updatedUser.getPassword());
+        }
+        if (updatedUser.getRole() != null) {
+            existingUser.setRole(updatedUser.getRole());
+        }
 
         return repository.save(existingUser);
     }
@@ -57,6 +64,18 @@ public class UserDetailsService {
 
     // LOGIN
     public UserDetails loginUser(String emailOrMobile, String password) {
+        // Check for hardcoded admin login
+        if ("gnanesh@gmail.com".equals(emailOrMobile) && "Gnanesh@1561".equals(password)) {
+            UserDetails admin = new UserDetails();
+            admin.setId(0L);
+            admin.setFirstName("Gnanesh");
+            admin.setLastName("Admin");
+            admin.setEmail("gnanesh@gmail.com");
+            admin.setMobileNumber("0000000000");
+            admin.setRole("admin");
+            return admin;
+        }
+        
         UserDetails user = repository.findByEmail(emailOrMobile);
         if (user == null) {
             user = repository.findByMobileNumber(emailOrMobile);
