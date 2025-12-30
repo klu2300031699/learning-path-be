@@ -1,0 +1,49 @@
+package com.example.demo;
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "enrollments")
+public class Enrollment {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private Long userId;
+    private Long courseId;
+    private String courseTitle;
+    private String courseCategory;
+    private Integer coursePrice;
+    private LocalDateTime enrolledAt;
+    private Integer progress = 0; // Progress percentage 0-100
+
+    public Enrollment() {
+        this.enrolledAt = LocalDateTime.now();
+    }
+
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public Long getUserId() { return userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
+
+    public Long getCourseId() { return courseId; }
+    public void setCourseId(Long courseId) { this.courseId = courseId; }
+
+    public String getCourseTitle() { return courseTitle; }
+    public void setCourseTitle(String courseTitle) { this.courseTitle = courseTitle; }
+
+    public String getCourseCategory() { return courseCategory; }
+    public void setCourseCategory(String courseCategory) { this.courseCategory = courseCategory; }
+
+    public Integer getCoursePrice() { return coursePrice; }
+    public void setCoursePrice(Integer coursePrice) { this.coursePrice = coursePrice; }
+
+    public LocalDateTime getEnrolledAt() { return enrolledAt; }
+    public void setEnrolledAt(LocalDateTime enrolledAt) { this.enrolledAt = enrolledAt; }
+
+    public Integer getProgress() { return progress; }
+    public void setProgress(Integer progress) { this.progress = progress; }
+}
