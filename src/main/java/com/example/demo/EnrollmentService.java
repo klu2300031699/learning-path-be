@@ -10,6 +10,9 @@ public class EnrollmentService {
     @Autowired
     private EnrollmentRepository repository;
 
+    @Autowired
+    private UserDetailsRepository userRepository;
+
     // Enroll user in a course
     public Enrollment enrollUser(Enrollment enrollment) {
         // Check if already enrolled
@@ -21,6 +24,14 @@ public class EnrollmentService {
         if (existing.isPresent()) {
             throw new RuntimeException("User already enrolled in this course");
         }
+        
+        // Fetch user details and populate enrollment
+        UserDetails user = userRepository.findById(enrollment.getUserId())
+            .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        enrollment.setUserName(user.getFirstName() + " " + user.getLastName());
+        enrollment.setUserEmail(user.getEmail());
+        enrollment.setUserMobileNumber(user.getMobileNumber());
         
         return repository.save(enrollment);
     }
