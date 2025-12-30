@@ -72,6 +72,32 @@ public class UserDetailsController {
                 .body(new ErrorResponse(e.getMessage()));
         }
     }
+
+    // REGISTER (for admin to add users)
+    @PostMapping("/register")
+    public org.springframework.http.ResponseEntity<?> registerUser(@RequestBody UserDetails userDetails) {
+        try {
+            // Check if user already exists
+            if (service.emailExists(userDetails.getEmail())) {
+                return org.springframework.http.ResponseEntity
+                    .status(org.springframework.http.HttpStatus.CONFLICT)
+                    .body("Email already exists");
+            }
+            
+            // Set default role if not provided
+            if (userDetails.getRole() == null || userDetails.getRole().isEmpty()) {
+                userDetails.setRole("user");
+            }
+            
+            // Save the user
+            UserDetails savedUser = service.saveUser(userDetails);
+            return org.springframework.http.ResponseEntity.ok(savedUser);
+        } catch (Exception e) {
+            return org.springframework.http.ResponseEntity
+                .status(org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error creating user: " + e.getMessage());
+        }
+    }
 }
 
 // DTO class

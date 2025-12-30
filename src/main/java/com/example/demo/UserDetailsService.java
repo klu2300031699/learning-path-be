@@ -87,4 +87,24 @@ public class UserDetailsService {
         
         return user;
     }
+
+    // Helper method to check if email exists
+    public boolean emailExists(String email) {
+        return repository.findByEmail(email) != null;
+    }
+
+    // Helper method to save user (for admin registration)
+    public UserDetails saveUser(UserDetails user) {
+        // Check for duplicate email
+        if (repository.findByEmail(user.getEmail()) != null) {
+            throw new RuntimeException("Email already exists");
+        }
+        // Check for duplicate mobile number if provided
+        if (user.getMobileNumber() != null && !user.getMobileNumber().isEmpty()) {
+            if (repository.findByMobileNumber(user.getMobileNumber()) != null) {
+                throw new RuntimeException("Mobile number already exists");
+            }
+        }
+        return repository.save(user);
+    }
 }
