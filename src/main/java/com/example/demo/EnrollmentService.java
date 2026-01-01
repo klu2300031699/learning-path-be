@@ -53,4 +53,17 @@ public class EnrollmentService {
         enrollment.setProgress(progress);
         return repository.save(enrollment);
     }
+
+    // Get all enrollments (for admin)
+    public List<Enrollment> getAllEnrollments() {
+        return repository.findAll();
+    }
+
+    // Delete enrollment (for admin)
+    public void deleteEnrollment(Long enrollmentId) {
+        if (!repository.existsById(enrollmentId)) {
+            throw new RuntimeException("Enrollment not found");
+        }
+        repository.deleteById(enrollmentId);
+    }
 }

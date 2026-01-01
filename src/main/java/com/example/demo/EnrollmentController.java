@@ -47,6 +47,23 @@ public class EnrollmentController {
         }
     }
 
+    // Get all enrollments (for admin)
+    @GetMapping("/all")
+    public List<Enrollment> getAllEnrollments() {
+        return service.getAllEnrollments();
+    }
+
+    // Delete enrollment (for admin)
+    @DeleteMapping("/delete/{enrollmentId}")
+    public ResponseEntity<?> deleteEnrollment(@PathVariable Long enrollmentId) {
+        try {
+            service.deleteEnrollment(enrollmentId);
+            return ResponseEntity.ok("Enrollment deleted successfully");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
     // Helper classes
     static class ErrorResponse {
         private String message;
