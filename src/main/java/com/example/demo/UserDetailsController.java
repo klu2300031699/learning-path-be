@@ -3,11 +3,12 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import jakarta.servlet.http.HttpSession;
 
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin("*")
+@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class UserDetailsController {
 
     @Autowired
@@ -62,15 +63,48 @@ public class UserDetailsController {
 
     // LOGIN
     @PostMapping("/login")
-    public org.springframework.http.ResponseEntity<?> loginUser(@RequestBody LoginRequest request) {
+    public org.springframework.http.ResponseEntity<?> loginUser(@RequestBody LoginRequest request, HttpSession session) {
         try {
             UserDetails user = service.loginUser(request.getEmailOrMobile(), request.getPassword());
+            // Store user in session
+            session.setAttribute("userId", user.getId());
+            session.setAttribute("userEmail", user.getEmail());
+            session.setAttribute("userRole", user.getRole());
+            session.setAttribute("userFirstName", user.getFirstName());
+            session.setAttribute("userMobileNumber", user.getMobileNumber());
+            session.setMaxInactiveInterval(24 * 60 * 60); // 24 hours
+            
             return org.springframework.http.ResponseEntity.ok(user);
         } catch (RuntimeException e) {
             return org.springframework.http.ResponseEntity
                 .status(org.springframework.http.HttpStatus.UNAUTHORIZED)
                 .body(new ErrorResponse(e.getMessage()));
         }
+    }
+    
+    // CHECK SESSION
+    @GetMapping("/session")
+    public org.springframework.http.ResponseEntity<?> checkSession(HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId != null) {
+            UserDetails user = new UserDetails();
+            user.setId(userId);
+            user.setEmail((String) session.getAttribute("userEmail"));
+            user.setRole((String) session.getAttribute("userRole"));
+            user.setFirstName((String) session.getAttribute("userFirstName"));
+            user.setMobileNumber((String) session.getAttribute("userMobileNumber"));
+            return org.springframework.http.ResponseEntity.ok(user);
+        }
+        return org.springframework.http.ResponseEntity
+            .status(org.springframework.http.HttpStatus.UNAUTHORIZED)
+            .body(new ErrorResponse("No active session"));
+    }
+    
+    // LOGOUT
+    @PostMapping("/logout")
+    public org.springframework.http.ResponseEntity<?> logout(HttpSession session) {
+        session.invalidate();
+        return org.springframework.http.ResponseEntity.ok("Logged out successfully");
     }
 
     // REGISTER (for admin to add users)
