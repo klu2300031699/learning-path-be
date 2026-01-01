@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:5173", "https://*.vercel.app"}, allowCredentials = "true")
 public class UserDetailsController {
 
     @Autowired
