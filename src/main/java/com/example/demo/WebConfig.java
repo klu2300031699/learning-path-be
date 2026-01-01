@@ -11,14 +11,16 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins(
-                    "http://localhost:5173",
+                .allowedOriginPatterns(
+                    "http://localhost:*",
                     "https://teachytechie.com",
-                    "https://www.teachytechie.com"
+                    "https://www.teachytechie.com",
+                    "https://*.vercel.app"
                 )
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH")
                 .allowedHeaders("*")
+                .exposedHeaders("*")
                 .allowCredentials(true)
-                .maxAge(3600);
+                .maxAge(86400);  // 24 hours for preflight cache
     }
 }
