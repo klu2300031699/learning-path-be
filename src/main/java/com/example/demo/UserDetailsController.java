@@ -17,7 +17,7 @@ public class UserDetailsController {
     // CREATE
     @PostMapping("/create")
     public org.springframework.http.ResponseEntity<?> createUser(
-            @RequestBody UserRequest request) {
+            @RequestBody UserRequest request, HttpSession session) {
         try {
             UserDetails user = new UserDetails();
             user.setFirstName(request.getFirstName());
@@ -26,6 +26,15 @@ public class UserDetailsController {
             user.setEmail(request.getEmail());
             user.setPassword(request.getPassword());
             UserDetails created = service.createUser(user, request.getConfirmPassword());
+            
+            // Automatically create session for the newly registered user
+            session.setAttribute("userId", created.getId());
+            session.setAttribute("userEmail", created.getEmail());
+            session.setAttribute("userRole", created.getRole());
+            session.setAttribute("userFirstName", created.getFirstName());
+            session.setAttribute("userMobileNumber", created.getMobileNumber());
+            session.setMaxInactiveInterval(24 * 60 * 60); // 24 hours
+            
             return org.springframework.http.ResponseEntity.ok(created);
         } catch (RuntimeException e) {
             return org.springframework.http.ResponseEntity
